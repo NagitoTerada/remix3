@@ -1,46 +1,22 @@
 import {
-  Form,
+  Outlet,
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
+  redirect,
 } from "react-router";
 import type { Route } from "./+types/root";
 
 import appStylesHref from "./app.css?url";
+import { createEmptyContact } from "./data";
+
+export const action = async () => {
+  const contact = await createEmptyContact();
+  return redirect(`/contacts/${contact.id}/edit`);
+};
 
 export default function App() {
-  return (
-    <>
-      <div id="sidebar">
-        <h1>React Router Contacts</h1>
-        <div>
-          <Form id="search-form" role="search">
-            <input
-              aria-label="Search contacts"
-              id="q"
-              name="q"
-              placeholder="Search"
-              type="search"
-            />
-            <div aria-hidden hidden={true} id="search-spinner" />
-          </Form>
-          <Form method="post">
-            <button type="submit">New</button>
-          </Form>
-        </div>
-        <nav>
-          <ul>
-            <li>
-              <a href={`/contacts/1`}>Your Name</a>
-            </li>
-            <li>
-              <a href={`/contacts/2`}>Your Friend</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </>
-  );
+  return <Outlet />;
 }
 
 // The Layout component is a special export for the root route.
@@ -48,7 +24,7 @@ export default function App() {
 // For more information, see https://reactrouter.com/explanation/special-files#layout-export
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="ja">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -62,6 +38,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
+
+export const HydrateFallback = () => (
+  <div id="loading-splash">
+    <div id="loading-splash-spinner" />
+    <p>Loading, please wait...</p>
+  </div>
+);
 
 // The top most error boundary for the app, rendered when your app throws an error
 // For more information, see https://reactrouter.com/start/framework/route-module#errorboundary
